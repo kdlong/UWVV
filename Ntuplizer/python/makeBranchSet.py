@@ -87,9 +87,9 @@ def makeBranchSet(channel):
 
         branches.append(makeCrossDaughterBranches(channel))
 
-        branches.append(zzDiscriminantBranches)
+#        branches.append(zzDiscriminantBranches)
 
-        branches.append(kinFitBranches)
+#        branches.append(kinFitBranches)
 
         # include FSR when ordering Zs
         branches.append(cms.PSet(fsrLabel=cms.string("fsr")))

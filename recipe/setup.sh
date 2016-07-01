@@ -3,13 +3,15 @@
 
 pushd $CMSSW_BASE/src
 
-echo "Setting up electron ID code"
-git clone https://github.com/Werbellin/RecoEgamma_8X RecoEgamma
+if [ ! -d ./RecoEgamma ]; then
+    echo "Setting up electron ID code"
+    git clone https://github.com/Werbellin/RecoEgamma_8X RecoEgamma
+else
+    echo "RecoEgamma repository already initialized"
+fi
 
-echo "Setting up ZZ matrix element stuff"
-git clone https://github.com/cms-analysis/HiggsAnalysis-ZZMatrixElement.git ZZMatrixElement
-pushd ZZMatrixElement
-git checkout -b from-master master
-popd
+if [ "$1" == "ZZ" ]; then
+    bash ./UWVV/recipe/setupZZ.sh
+fi
 
 popd
