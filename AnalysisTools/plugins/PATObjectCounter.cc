@@ -2,8 +2,8 @@
 //                                                                           //
 //    PATObjectCounter                                                       //
 //                                                                           //
-//    Takes a collection of PAT objects and adss and int of the     //
-//    number of objects passing the (otional) specified cut to the event     //
+//    Takes a collection of PAT objects and adds an int of the               //
+//    number of objects passing each specified cut to the event              //
 //                                                                           //
 //    Kenneth Long, U. Wisconsin                                             //
 //                                                                           //

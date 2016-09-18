@@ -93,12 +93,76 @@ namespace
                                          -1.);
                                });
 
+        addTo["jet1Eta"] = 
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
+                               {
+                                 return (evt.jets()->size() >= 1 ? 
+                                         evt.jets()->at(0).eta() :
+                                         -999.);
+                               });
+
+        addTo["jet1Phi"] = 
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
+                               {
+                                 return (evt.jets()->size() >= 1 ? 
+                                         evt.jets()->at(0).phi() :
+                                         -999.);
+                               });
+
         addTo["jet2Pt"] = 
           std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
                                {
                                  return (evt.jets()->size() >= 2 ? 
                                          evt.jets()->at(1).pt() :
                                          -1.);
+                               });
+
+        addTo["jet2Eta"] = 
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
+                               {
+                                 return (evt.jets()->size() >= 2 ? 
+                                         evt.jets()->at(1).eta() :
+                                         -999.);
+                               });
+
+        addTo["jet2Phi"] = 
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
+                               {
+                                 return (evt.jets()->size() >= 2 ? 
+                                         evt.jets()->at(1).phi() :
+                                         -999.);
+                               });
+
+        addTo["dijetMass"] = 
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
+                               {
+                                 return (evt.jets()->size() >= 2 ? 
+                                         (evt.jets()->at(0).p4() + evt.jets()->at(1).p4()).mass() :
+                                         -1.);
+                               });
+        
+        addTo["dijetPt"] = 
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
+                               {
+                                 return (evt.jets()->size() >= 2 ? 
+                                         (evt.jets()->at(0).p4() + evt.jets()->at(1).p4()).phi() :
+                                         -1.);
+                               });
+
+        addTo["dijetEta"] = 
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
+                               {
+                                 return (evt.jets()->size() >= 2 ? 
+                                         (evt.jets()->at(0).p4() + evt.jets()->at(1).p4()).eta() :
+                                         -999.);
+                               });
+        
+        addTo["dijetPhi"] = 
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
+                               {
+                                 return (evt.jets()->size() >= 2 ? 
+                                         (evt.jets()->at(0).p4() + evt.jets()->at(1).p4()).phi() :
+                                         -999.);
                                });
 
         addTo["jet1QGLikelihood"] = 
@@ -220,7 +284,6 @@ namespace
         addTo["nJets"] = 
           std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
                                {return evt.jets()->size();});
-
         addTo["nGenJets"] = 
           std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt)
                                {return evt.genJets()->size();});
