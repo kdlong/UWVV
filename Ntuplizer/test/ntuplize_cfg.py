@@ -329,7 +329,7 @@ if zz and options.isMC and options.genInfo:
     process.genTreeSequence = cms.Sequence()
 
     from UWVV.AnalysisTools.templates.GenZZBase import GenZZBase
-    from UWVV.AnalysisTools.templates.GenLeptonBase import GenLeptonBase
+    from UWVV.AnalysisTools.templates.DressedGenLeptonBase import DressedGenLeptonBase
     GenFlow = createFlow(GenLeptonBase, GenZZBase)
     genFlow = GenFlow('genFlow', process, suffix='Gen', e='prunedGenParticles',
                       m='prunedGenParticles', j='slimmedGenJets',
