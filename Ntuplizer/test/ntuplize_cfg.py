@@ -349,7 +349,8 @@ process.metaInfo = cms.EDAnalyzer(
     'MetaTreeGenerator',
     eventParams = makeEventParams(flow.finalTags()),
     )
-process.treeSequence = cms.Sequence(process.metaInfo)
+process.metaTreePath = cms.Path(process.metaInfo)
+process.schedule.append(process.metaTreePath)
 
 # Trigger info is only in MC from reHLT campaign
 if options.isMC and 'reHLT' not in options.inputFiles[0] and 'withHLT' not in options.inputFiles[0]:
@@ -364,7 +365,7 @@ else:
     if 'reHLT' in options.inputFiles[0]:
         trgBranches = trgBranches.clone(trigResultsSrc=cms.InputTag("TriggerResults", "", "HLT2"))
 
-
+process.treeSequence = cms.Sequence()
 # then the ntuples
 for chan in channels:
     mod = cms.EDAnalyzer(
@@ -430,8 +431,6 @@ if zz and options.isMC and options.genInfo:
     pGen += process.genTreeSequence
     process.schedule.append(pGen)
 
-
 p = flow.getPath()
 p += process.treeSequence
-
 process.schedule.append(p)
