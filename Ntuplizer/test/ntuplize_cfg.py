@@ -274,6 +274,8 @@ elif zl or z:
         from UWVV.AnalysisTools.templates.ZPlusXInitialStateBaseFlow import ZPlusXInitialStateBaseFlow
         FlowSteps.append(ZPlusXInitialStateBaseFlow)
 
+        from UWVV.AnalysisTools.templates.WZID import WZID
+        FlowSteps.append(WZID)
         from UWVV.AnalysisTools.templates.WZLeptonCounters import WZLeptonCounters
         FlowSteps.append(WZLeptonCounters)
 
