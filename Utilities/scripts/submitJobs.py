@@ -19,6 +19,7 @@ import logging
 import fnmatch
 from UWVV.Utilities.dbsinterface import get_das_info
 import datetime
+import re
 
 
 log = logging.getLogger("submitJobs")
@@ -138,9 +139,14 @@ def buildScript(cfg, jobid, scriptFile='',
 
     for dataset in datasets:
         name = dataset.split('/')[1]
+        extension = re.findall("(?:_ext)\d", dataset)
 
         for pattern in samples:
             if fnmatch.fnmatchcase(name, pattern):
+                if len(extension) > 0:
+                    name += extension[0]
+                print name
+                continue
                 lines.append(writeFarmoutCommand(cfg, jobid, name, dataset,
                                                  outdir, **args))
                 lines.append("\n") # Separate each command by new line
