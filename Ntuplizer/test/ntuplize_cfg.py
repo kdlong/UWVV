@@ -293,7 +293,7 @@ elif l:
     FlowSteps.append(ZZSkim)
 
 
-if (zz or zl or z) and not "wz" in options.channels:
+if (zz or zl or z) and not wz:
     for f in FlowSteps:
         if f.__name__ in ['ZZFSR', 'ZZFlow']:
             from UWVV.Ntuplizer.templates.fsrBranches import compositeObjectFSRBranches, leptonFSRBranches
@@ -324,12 +324,18 @@ if options.muCalib:
 
 
 # VBS variables for ZZ
-if zz:
-    from UWVV.Ntuplizer.templates.vbsBranches import vbsBranches
-    extraInitialStateBranches.append(vbsBranches)
+if zz or wz:
+    from UWVV.Ntuplizer.templates.vbsBranches import vbsPrimitiveBranches
+    extraInitialStateBranches.append(vbsPrimitiveBranches)
+    if zz:
+        from UWVV.Ntuplizer.templates.vbsBranches import vbsPrimitiveBranches
+        extraInitialStateBranches.append(vbsDerivedBranches)
     if options.isMC:
-        from UWVV.Ntuplizer.templates.vbsBranches import vbsSystematicBranches
-        extraInitialStateBranches.append(vbsSystematicBranches)
+        from UWVV.Ntuplizer.templates.vbsBranches import vbsPrimitiveSystematicBranches
+        extraInitialStateBranches.append(vbsPrimitiveSystematicBranches)
+        if zz:
+            from UWVV.Ntuplizer.templates.vbsBranches import vbsDerivedSystematicBranches
+            extraInitialStateBranches.append(vbsDerivedSystematicBranches)
 
 
 flowOpts = {
