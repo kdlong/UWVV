@@ -145,8 +145,6 @@ def buildScript(cfg, jobid, scriptFile='',
             if fnmatch.fnmatchcase(name, pattern):
                 if len(extension) > 0:
                     name += extension[0]
-                print name
-                continue
                 lines.append(writeFarmoutCommand(cfg, jobid, name, dataset,
                                                  outdir, **args))
                 lines.append("\n") # Separate each command by new line
