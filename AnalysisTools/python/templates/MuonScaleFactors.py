@@ -15,7 +15,7 @@ class MuonScaleFactors(AnalysisFlowBase):
         step = super(MuonScaleFactors, self).makeAnalysisStep(stepName, **inputs)
 
         if stepName == 'embedding' and self.isMC:
-
+            
             sfFile = path.join(UWVV_BASE_PATH, 'data', 'LeptonScaleFactors',
                                'muEfficiencySF_all_HZZ_ICHEP16_final_withErrors.root')
             sfName = 'FINAL'
