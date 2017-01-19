@@ -115,6 +115,7 @@ if options.genLeptonType not in genLepChoices:
 channels = parseChannels(options.channels)
 zz = any(len(c) == 4 for c in channels)
 zl = any(len(c) == 3 for c in channels)
+wz = "wz" in options.channels 
 z  = any(len(c) == 2 for c in channels)
 l  = any(len(c) == 1 for c in channels)
 
@@ -242,9 +243,10 @@ if any(len(c) == 4 for c in channels):
     from UWVV.Ntuplizer.templates.eventBranches import centralJetBranches
     extraInitialStateBranches.append(centralJetBranches)
 
-# FSR and ZZ/HZZ stuff
-from UWVV.AnalysisTools.templates.ZZFlow import ZZFlow
-FlowSteps.append(ZZFlow)
+if not wz:
+    # FSR and ZZ/HZZ stuff
+    from UWVV.AnalysisTools.templates.ZZFlow import ZZFlow
+    FlowSteps.append(ZZFlow)
 
 # make final states
 if zz:
@@ -270,13 +272,17 @@ if zz:
     from UWVV.AnalysisTools.templates.ZZSkim import ZZSkim
     FlowSteps.append(ZZSkim)
 
-elif zl or z:
+elif zl or z or wz:
     from UWVV.AnalysisTools.templates.ZPlusXBaseFlow import ZPlusXBaseFlow
     FlowSteps.append(ZPlusXBaseFlow)
-    if zl:
+    if wz:
         from UWVV.AnalysisTools.templates.ZPlusXInitialStateBaseFlow import ZPlusXInitialStateBaseFlow
         FlowSteps.append(ZPlusXInitialStateBaseFlow)
 
+        from UWVV.AnalysisTools.templates.WZID import WZID
+        FlowSteps.append(WZID)
+        from UWVV.AnalysisTools.templates.WZCrossCleaning import WZCrossCleaning
+        FlowSteps.append(WZCrossCleaning)
         from UWVV.AnalysisTools.templates.WZLeptonCounters import WZLeptonCounters
         FlowSteps.append(WZLeptonCounters)
 
@@ -290,7 +296,7 @@ elif l:
     FlowSteps.append(ZZSkim)
 
 
-if (zz or zl or z) and not "wz" in options.channels:
+if (zz or zl or z) and not wz:
     for f in FlowSteps:
         if f.__name__ in ['ZZFSR', 'ZZFlow']:
             from UWVV.Ntuplizer.templates.fsrBranches import compositeObjectFSRBranches, leptonFSRBranches
@@ -321,12 +327,18 @@ if options.muCalib:
 
 
 # VBS variables for ZZ
-if zz:
-    from UWVV.Ntuplizer.templates.vbsBranches import vbsBranches
-    extraInitialStateBranches.append(vbsBranches)
+if zz or wz:
+    from UWVV.Ntuplizer.templates.vbsBranches import vbsPrimitiveBranches
+    extraInitialStateBranches.append(vbsPrimitiveBranches)
+    if zz:
+        from UWVV.Ntuplizer.templates.vbsBranches import vbsPrimitiveBranches
+        extraInitialStateBranches.append(vbsDerivedBranches)
     if options.isMC:
-        from UWVV.Ntuplizer.templates.vbsBranches import vbsSystematicBranches
-        extraInitialStateBranches.append(vbsSystematicBranches)
+        from UWVV.Ntuplizer.templates.vbsBranches import vbsPrimitiveSystematicBranches
+        extraInitialStateBranches.append(vbsPrimitiveSystematicBranches)
+        if zz:
+            from UWVV.Ntuplizer.templates.vbsBranches import vbsDerivedSystematicBranches
+            extraInitialStateBranches.append(vbsDerivedSystematicBranches)
 
 
 # Trigger info is only in MC from reHLT campaign
@@ -348,7 +360,6 @@ else:
 
     if 'reHLT' in options.inputFiles[0]:
         trgBranches = trgBranches.clone(trigResultsSrc=cms.InputTag("TriggerResults", "", "HLT2"))
-
 
 # Gen ntuples if desired
 if zz and options.isMC and options.genInfo:
@@ -464,5 +475,4 @@ for chan in channels:
 
 p = flow.getPath()
 p += process.treeSequence
-
 process.schedule.append(p)

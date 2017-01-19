@@ -18,7 +18,8 @@ muonBranches = cms.PSet(
         PFPhotonIso = cms.string('pfIsolationR03.sumPhotonEt'),
         PFNeutralIso = cms.string('pfIsolationR03.sumNeutralHadronEt'),
         PFPUIso = cms.string('pfIsolationR03.sumPUPt'),
-
+        TrackIso = cms.string('trackIso()'), 
+        
         PtErr = cms.string('? hasUserFloat("kalmanPtError") ? '
                            'userFloat("kalmanPtError") : '
                            'bestTrack.ptError'),
@@ -45,6 +46,14 @@ muonBranches = cms.PSet(
                                  'userInt("isTightMuon") : 0'),
         IsMediumMuonICHEP = cms.string('? hasUserInt("isMediumMuonICHEP") ?'
                                        'userInt("isMediumMuonICHEP") : 0'),
+        IsWZMediumMuon = cms.string('? hasUserInt("isWZMediumMuon") ?'
+                                       'userInt("isWZMediumMuon") : 0'),
+        IsWZMediumMuonNoIso = cms.string('? hasUserInt("isWZMediumMuonNoIso") ?'
+                                       'userInt("isWZMediumMuonNoIso") : 0'),
+        IsWZLooseMuonNoIso = cms.string('? hasUserInt("isWZLooseMuonNoIso") ?'
+                                       'userInt("isWZLooseMuonNoIso") : 0'),
+        IsWZLooseMuon = cms.string('? hasUserInt("isWZLooseMuon") ?'
+                                       'userInt("isWZLooseMuon") : 0'),
 
         HighPtID = cms.string('? hasUserFloat("ZZIDPassHighPt") ? '
                               'userFloat("ZZIDPassHighPt") : 0.'),

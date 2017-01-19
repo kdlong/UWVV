@@ -79,7 +79,7 @@ input.DAT
 process.DAT
 ffwarn.dat
 
-# Generated WZ submissions scripts
+# Farmout generated WZ submissions scripts
 scripts/WZSubmission/GeneratedScripts
 
 # Crab submit directories

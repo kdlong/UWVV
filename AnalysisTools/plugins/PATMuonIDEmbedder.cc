@@ -1,6 +1,7 @@
-// MuonIdEmbedder.cc
+// PATMuonIDEmbedder.cc
 // Embeds muons ids as userInts for later
-// Devin Taylor, U. Wisconsin
+// via Devin Taylor, U. Wisconsin
+// with modifications by K. Long, U. Wisconsin
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/stream/EDProducer.h"
@@ -28,6 +29,10 @@ private:
   void endJob() {}
 
   bool isMediumMuonICHEP(const reco::Muon& recoMu);
+  bool isWZMediumMuon(const pat::Muon& patMu, const reco::Vertex& pv);
+  bool isWZMediumMuonNoIso(const pat::Muon& patMu, const reco::Vertex& pv);
+  bool isWZLooseMuon(const pat::Muon& patMu);
+  bool isWZLooseMuonNoIso(const pat::Muon& patMu);
   bool isSoftMuonICHEP(const reco::Muon& recoMu, const reco::Vertex& pv);
 
   // Data
@@ -62,6 +67,10 @@ void MuonIdEmbedder::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     newObj.addUserInt("isTightMuon", obj.isTightMuon(pv));
     newObj.addUserInt("isMediumMuonICHEP", isMediumMuonICHEP(obj));
+    newObj.addUserInt("isWZMediumMuon", isWZMediumMuon(obj, pv));
+    newObj.addUserInt("isWZMediumMuonNoIso", isWZMediumMuonNoIso(obj, pv));
+    newObj.addUserInt("isWZLooseMuon", isWZLooseMuon(obj));
+    newObj.addUserInt("isWZLooseMuonNoIso", isWZLooseMuonNoIso(obj));
     newObj.addUserInt("isSoftMuon", obj.isSoftMuon(pv));
     newObj.addUserInt("isSoftMuonICHEP", isSoftMuonICHEP(obj,pv));
     newObj.addUserInt("isHighPtMuon", obj.isHighPtMuon(pv));
@@ -92,8 +101,38 @@ bool MuonIdEmbedder::isMediumMuonICHEP(const reco::Muon & recoMu)
                     muon::segmentCompatibility(recoMu) > (goodGlob ? 0.303 : 0.451); 
     return isMedium; 
   }
-
-
+bool MuonIdEmbedder::isWZLooseMuon(const pat::Muon& patMu) 
+  {
+    reco::MuonPFIsolation pfIsoDB04 = patMu.pfIsolationR04();
+    float muIso = (pfIsoDB04.sumChargedHadronPt
+                        + std::max(0., pfIsoDB04.sumNeutralHadronEt
+                            + pfIsoDB04.sumPhotonEt
+                            - 0.5*pfIsoDB04.sumPUPt)
+                  ) / patMu.pt();
+    return isWZLooseMuonNoIso(patMu) && muIso < 0.25;
+  }
+bool MuonIdEmbedder::isWZLooseMuonNoIso(const pat::Muon& patMu) 
+  {
+    return isMediumMuonICHEP(patMu) && 
+        patMu.trackIso()/patMu.pt() < 0.4;
+  }
+bool MuonIdEmbedder::isWZMediumMuonNoIso(const pat::Muon& patMu, const reco::Vertex& pv) 
+  {
+    double dxy = std::abs(patMu.innerTrack()->dxy(pv.position()));
+    return isWZLooseMuonNoIso(patMu) && 
+        ( patMu.pt() > 20. ? dxy < 0.02 : dxy < 0.01 ) &&
+        std::abs(patMu.innerTrack()->dz(pv.position())) < 0.1;
+  }
+bool MuonIdEmbedder::isWZMediumMuon(const pat::Muon& patMu, const reco::Vertex& pv) 
+  {
+    reco::MuonPFIsolation pfIsoDB04 = patMu.pfIsolationR04();
+    float muIso = (pfIsoDB04.sumChargedHadronPt
+                        + std::max(0., pfIsoDB04.sumNeutralHadronEt
+                            + pfIsoDB04.sumPhotonEt
+                            - 0.5*pfIsoDB04.sumPUPt)
+                  ) / patMu.pt();
+    return isWZMediumMuonNoIso(patMu, pv) && muIso < 0.15;
+  }
 bool MuonIdEmbedder::isSoftMuonICHEP(const reco::Muon & recoMu, const reco::Vertex& pv) 
   {
     bool soft = muon::isGoodMuon(recoMu, muon::TMOneStationTight) &&
@@ -103,7 +142,6 @@ bool MuonIdEmbedder::isSoftMuonICHEP(const reco::Muon & recoMu, const reco::Vert
                 fabs(recoMu.innerTrack()->dz(pv.position())) < 20.;
     return soft;
   }
-
 void MuonIdEmbedder::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
