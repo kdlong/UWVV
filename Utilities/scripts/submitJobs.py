@@ -141,7 +141,6 @@ def buildScript(cfg, jobid, scriptFile='',
 
     datasets = get_das_info(datasetStr)
 
-<<<<<<< HEAD
     found = set()
 
     for s in samples:
