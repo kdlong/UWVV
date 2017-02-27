@@ -31,11 +31,11 @@ options.register('isMC', 1,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "1 if simulation, 0 if data")
-options.register('eCalib', 1,
+options.register('eCalib', 0,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "1 if electron energy corrections are desired")
-options.register('muCalib', 1,
+options.register('muCalib', 0,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "1 if muon momentum corrections are desired")
@@ -91,10 +91,6 @@ options.register('lheWeights', 1,
                  'Add LHE weights from Monte Carlo. Option 1 = scale weights '
                  '(weights 0-9), 2 = scale weights and one set of PDF weights '
                  '(weights 0-111), 3 = all scale and PDF weights. Default 1.')
-options.register('datasetName', '',
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.string,
-                 "dataset name")
 
 options.parseArguments()
 
@@ -119,7 +115,6 @@ if options.genLeptonType not in genLepChoices:
 channels = parseChannels(options.channels)
 zz = any(len(c) == 4 for c in channels)
 zl = any(len(c) == 3 for c in channels)
-wz = "wz" in options.channels 
 z  = any(len(c) == 2 for c in channels)
 l  = any(len(c) == 1 for c in channels)
 
@@ -143,6 +138,7 @@ if options.profile:
 
 
 # Basic stuff for all jobs
+
 process.load("Configuration.StandardSequences.GeometryRecoDB_cff")
 
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
@@ -204,24 +200,11 @@ FlowSteps.append(VertexCleaning)
 # everybody needs basic lepton stuff
 from UWVV.AnalysisTools.templates.ElectronBaseFlow import ElectronBaseFlow
 FlowSteps.append(ElectronBaseFlow)
+from UWVV.AnalysisTools.templates.RecomputeElectronID import RecomputeElectronID
+FlowSteps.append(RecomputeElectronID)
 
 from UWVV.AnalysisTools.templates.MuonBaseFlow import MuonBaseFlow
 FlowSteps.append(MuonBaseFlow)
-
-# Lepton calibrations
-if options.eCalib:
-    from UWVV.AnalysisTools.templates.ElectronCalibration import ElectronCalibration
-    FlowSteps.append(ElectronCalibration)
-
-if options.muCalib:
-    from UWVV.AnalysisTools.templates.MuonCalibration import MuonCalibration
-    FlowSteps.append(MuonCalibration)
-
-    from UWVV.Ntuplizer.templates.muonBranches import muonCalibrationBranches
-    extraFinalObjectBranches['m'].append(muonCalibrationBranches)
-
-from UWVV.AnalysisTools.templates.RecomputeElectronID import RecomputeElectronID
-FlowSteps.append(RecomputeElectronID)
 
 from UWVV.AnalysisTools.templates.MuonScaleFactors import MuonScaleFactors
 FlowSteps.append(MuonScaleFactors)
@@ -259,10 +242,9 @@ if any(len(c) == 4 for c in channels):
     from UWVV.Ntuplizer.templates.eventBranches import centralJetBranches
     extraInitialStateBranches.append(centralJetBranches)
 
-if not wz:
-    # FSR and ZZ/HZZ stuff
-    from UWVV.AnalysisTools.templates.ZZFlow import ZZFlow
-    FlowSteps.append(ZZFlow)
+# FSR and ZZ/HZZ stuff
+from UWVV.AnalysisTools.templates.ZZFlow import ZZFlow
+FlowSteps.append(ZZFlow)
 
 # make final states
 if zz:
@@ -288,17 +270,13 @@ if zz:
     from UWVV.AnalysisTools.templates.ZZSkim import ZZSkim
     FlowSteps.append(ZZSkim)
 
-elif zl or z or wz:
+elif zl or z:
     from UWVV.AnalysisTools.templates.ZPlusXBaseFlow import ZPlusXBaseFlow
     FlowSteps.append(ZPlusXBaseFlow)
-    if wz:
+    if zl:
         from UWVV.AnalysisTools.templates.ZPlusXInitialStateBaseFlow import ZPlusXInitialStateBaseFlow
         FlowSteps.append(ZPlusXInitialStateBaseFlow)
 
-        from UWVV.AnalysisTools.templates.WZID import WZID
-        FlowSteps.append(WZID)
-        from UWVV.AnalysisTools.templates.WZCrossCleaning import WZCrossCleaning
-        FlowSteps.append(WZCrossCleaning)
         from UWVV.AnalysisTools.templates.WZLeptonCounters import WZLeptonCounters
         FlowSteps.append(WZLeptonCounters)
 
@@ -312,7 +290,7 @@ elif l:
     FlowSteps.append(ZZSkim)
 
 
-if (zz or zl or z) and not wz:
+if (zz or zl or z) and not "wz" in options.channels:
     for f in FlowSteps:
         if f.__name__ in ['ZZFSR', 'ZZFlow']:
             from UWVV.Ntuplizer.templates.fsrBranches import compositeObjectFSRBranches, leptonFSRBranches
@@ -329,34 +307,39 @@ if (zz or zl or z) and not wz:
             extraInitialStateBranches.append(zzCountBranches)
             break
 
+# Lepton calibrations
+if options.eCalib:
+    from UWVV.AnalysisTools.templates.ElectronCalibration import ElectronCalibration
+    FlowSteps.append(ElectronCalibration)
+
+if options.muCalib:
+    from UWVV.AnalysisTools.templates.MuonCalibration import MuonCalibration
+    FlowSteps.append(MuonCalibration)
+
+    from UWVV.Ntuplizer.templates.muonBranches import muonCalibrationBranches
+    extraFinalObjectBranches['m'].append(muonCalibrationBranches)
+
 
 # VBS variables for ZZ
-if zz or wz:
-    from UWVV.Ntuplizer.templates.vbsBranches import vbsPrimitiveBranches
-    extraInitialStateBranches.append(vbsPrimitiveBranches)
-    if zz:
-        from UWVV.Ntuplizer.templates.vbsBranches import vbsDerivedBranches
-        extraInitialStateBranches.append(vbsDerivedBranches)
+if zz:
+    from UWVV.Ntuplizer.templates.vbsBranches import vbsBranches
+    extraInitialStateBranches.append(vbsBranches)
     if options.isMC:
-        from UWVV.Ntuplizer.templates.vbsBranches import vbsPrimitiveSystematicBranches
-        extraInitialStateBranches.append(vbsPrimitiveSystematicBranches)
-        if zz:
-            from UWVV.Ntuplizer.templates.vbsBranches import vbsDerivedSystematicBranches
-            extraInitialStateBranches.append(vbsDerivedSystematicBranches)
+        from UWVV.Ntuplizer.templates.vbsBranches import vbsSystematicBranches
+        extraInitialStateBranches.append(vbsSystematicBranches)
 
 
 # Trigger info is only in MC from reHLT campaign
-if 'RunIISpring16' in options.inputFiles[0] and 'reHLT' not in options.inputFiles[0] and 'withHLT' not in options.inputFiles[0] \
-        or "RunIISpring16" in options.datasetName:
+if 'RunIISpring16' in options.inputFiles[0] and 'reHLT' not in options.inputFiles[0] and 'withHLT' not in options.inputFiles[0]:
     trgBranches = cms.PSet(
         trigNames=cms.vstring(),
         trigResultsSrc = cms.InputTag("TriggerResults", "", "HLT"),
         trigPrescaleSrc = cms.InputTag("patTrigger"),
         )
-elif 'Run2016G' in options.inputFiles[0] or "Run2016G" in options.datasetName:
+elif 'Run2016G' in options.inputFiles[0]:
     from UWVV.Ntuplizer.templates.triggerBranches import triggerBranches_2016G
     trgBranches = triggerBranches_2016G
-elif 'Run2016H' in options.inputFiles[0] or "Run2016H" in options.datasetName:
+elif 'Run2016H' in options.inputFiles[0]:
     from UWVV.Ntuplizer.templates.triggerBranches import triggerBranches_2016H
     trgBranches = triggerBranches_2016H
 else:
@@ -365,6 +348,7 @@ else:
 
     if 'reHLT' in options.inputFiles[0]:
         trgBranches = trgBranches.clone(trigResultsSrc=cms.InputTag("TriggerResults", "", "HLT2"))
+
 
 # Gen ntuples if desired
 if zz and options.isMC and options.genInfo:
@@ -451,32 +435,11 @@ FlowClass = createFlow(*FlowSteps)
 flow = FlowClass('flow', process, **flowOpts)
 
 
-
-### Set up tree makers
-
-# meta info tree first
-process.metaInfo = cms.EDAnalyzer(
-    'MetaTreeGenerator',
-    eventParams = makeEventParams(flow.finalTags()),
+process.printJets = cms.EDAnalyzer(
+    'JetPrinter',
+    src = flow.finalObjTag('j'),
     )
-process.treeSequence = cms.Sequence(process.metaInfo)
-
-
-# then the ntuples
-for chan in channels:
-    mod = cms.EDAnalyzer(
-        'TreeGenerator{}'.format(expandChannelName(chan)),
-        src = flow.finalObjTag(chan),
-        branches = makeBranchSet(chan, extraInitialStateBranches,
-                                 extraIntermediateStateBranches,
-                                 **extraFinalObjectBranches),
-        eventParams = makeEventParams(flow.finalTags(),chan),
-        triggers = trgBranches,
-        )
-
-    setattr(process, chan, mod)
-    process.treeSequence += mod
-
 p = flow.getPath()
-p += process.treeSequence
 process.schedule.append(p)
+process.pPrint = cms.Path(process.printJets)
+process.schedule.append(process.pPrint)
