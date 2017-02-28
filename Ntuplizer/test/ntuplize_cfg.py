@@ -228,6 +228,9 @@ FlowSteps.append(MuonScaleFactors)
 from UWVV.AnalysisTools.templates.ElectronScaleFactors import ElectronScaleFactors
 FlowSteps.append(ElectronScaleFactors)
 
+from UWVV.AnalysisTools.templates.AddMetFilters import AddMetFilters 
+FlowSteps.append(AddMetFilters)
+
 # data and MCFM samples never have LHE info
 if not options.isMC or 'mcfm' in options.inputFiles[0].lower():
     options.lheWeights = 0
@@ -453,9 +456,12 @@ flow = FlowClass('flow', process, **flowOpts)
 
 ### Set up tree makers
 
+dsname = options.datasetName[1:].split("/")[0] if "/" in \
+    options.datasetName else options.datasetName
 # meta info tree first
 process.metaInfo = cms.EDAnalyzer(
     'MetaTreeGenerator',
+    datasetName = cms.string(dsname),
     eventParams = makeEventParams(flow.finalTags()),
     )
 process.treeSequence = cms.Sequence(process.metaInfo)
