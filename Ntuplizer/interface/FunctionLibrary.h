@@ -9,7 +9,7 @@
 
 #include "UWVV/Ntuplizer/interface/EventInfo.h"
 #include "UWVV/Ntuplizer/interface/StringFunctionMaker.h"
-#include "UWVV/Utilities/src/helpers.cc"
+#include "UWVV/Utilities/src/helpers.h"
 #include "UWVV/DataFormats/interface/DressedGenParticle.h"
 
 #include "DataFormats/PatCandidates/interface/Electron.h"
