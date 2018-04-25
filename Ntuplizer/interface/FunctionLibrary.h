@@ -187,11 +187,27 @@ namespace
 
         addTo["type1_pfMETEt"] =
           std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-                               {return evt.met().pt();});
+                               {return evt.met(option).pt();});
+
+        addTo["type1_pfMETEt_jesUp"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetEnUp).pt();});
+
+        addTo["type1_pfMETEt_jesDown"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetEnDown).pt();});
+
+        addTo["type1_pfMETEt_jerUp"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetResUp).pt();});
+
+        addTo["type1_pfMETEt_jerDown"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetResDown).pt();});
 
         addTo["type1_pfMETPhi"] =
           std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-                               {return evt.met().phi();});
+                               {return evt.met(option).phi();});
 
         addTo["genWeight"] =
           std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)

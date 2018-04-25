@@ -122,6 +122,18 @@ jetSystematicBranches = cms.PSet(
         nJets_jerUp = cms.string('nJets::jerUp'),
         nJets_jerDown = cms.string('nJets::jerDown'),
         ),
+    floats = cms.PSet(
+        type1_pfMETEt_UncTool = cms.string('type1_pfMETEt::fromUncertaintyTool'),
+        type1_pfMETPhi_UncTool = cms.string('type1_pfMETPhi::fromUncertaintyTool'),
+        type1_pfMETEt_jesUp_old = cms.string('type1_pfMETEt_jesUp'),
+        type1_pfMETEt_jesUp = cms.string('type1_pfMETEt_jesUp::fromUncertaintyTool'),
+        type1_pfMETEt_jesDown_old = cms.string('type1_pfMETEt_jesDown'),
+        type1_pfMETEt_jesDown = cms.string('type1_pfMETEt_jesDown::fromUncertaintyTool'),
+        type1_pfMETEt_jerUp_old = cms.string('type1_pfMETEt_jerUp'),
+        type1_pfMETEt_jerUp = cms.string('type1_pfMETEt_jerUp::fromUncertaintyTool'),
+        type1_pfMETEt_jerDown_old = cms.string('type1_pfMETEt_jerDown'),
+        type1_pfMETEt_jerDown = cms.string('type1_pfMETEt_jerDown::fromUncertaintyTool'),
+        ),
     )
 
 # gen-level initial state info for reco ntuple

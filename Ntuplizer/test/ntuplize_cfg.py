@@ -12,6 +12,7 @@ from UWVV.Ntuplizer.eventParams import makeEventParams, makeGenEventParams
 import os
 
 process = cms.Process("Ntuple")
+process.options = cms.untracked.PSet( allowUnscheduled = cms.untracked.bool(True) )
 
 options = VarParsing.VarParsing('analysis')
 
@@ -244,6 +245,8 @@ FlowSteps.append(ElectronScaleFactors)
 
 from UWVV.AnalysisTools.templates.BadMuonFilters import BadMuonFilters 
 FlowSteps.append(BadMuonFilters)
+from UWVV.AnalysisTools.templates.RecomputeMetUncertainties import RecomputeMetUncertainties
+FlowSteps.append(RecomputeMetUncertainties)
 
 # data and MCFM samples never have LHE info
 if not options.isMC or 'mcfm' in options.inputFiles[0].lower() \
@@ -369,7 +372,6 @@ FlowClass = createFlow(*FlowSteps)
 flow = FlowClass('flow', process, initialstate_chans=channels, **flowOpts)
 
 
-
 ### Set up tree makers
 
 # meta info tree first
@@ -398,6 +400,12 @@ else:
         from UWVV.Ntuplizer.templates.triggerBranches import zzCompositeTriggerBranches
         trgBranches = zzCompositeTriggerBranches
 
+#from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+#runMetCorAndUncFromMiniAOD(process,
+#    isData=not options.isMC,
+#)
+#process.schedule.append(cms.Path(process.fullPatMetSequence))
+
 # Add bad muon filters in addition to met filters for ReMiniAOD
 if options.isMC:
     from UWVV.Ntuplizer.templates.filterBranches import metFilters
@@ -415,11 +423,16 @@ for chan in channels:
         branches = makeBranchSet(chan, extraInitialStateBranches,
                                  extraIntermediateStateBranches,
                                  **extraFinalObjectBranches),
-        eventParams = makeEventParams(flow.finalTags(),chan, metSrc='slimmedMETsMuEGClean')
-            if not options.isMC else makeEventParams(flow.finalTags(), chan),
+        eventParams = makeEventParams(flow.finalTags(), chan, 
+                metSrc='slimmedMETsMuEGClean',
+                #metExtra='slimmedMETs::Ntuple',
+            ) if not options.isMC else \
+            makeEventParams(flow.finalTags(), chan,
+                #metExtra='slimmedMETs::Ntuple',
+            ),
         triggers = trgBranches,
         filters = filterBranches,
-        )
+    )
 
     setattr(process, chan, mod)
     process.treeSequence += mod
@@ -490,3 +503,5 @@ if zz and options.isMC and options.genInfo:
 p = flow.getPath()
 p += process.treeSequence
 process.schedule.append(p)
+# Useful for debugging
+# print process.dumpPython()

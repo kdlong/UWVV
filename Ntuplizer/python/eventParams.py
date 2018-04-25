@@ -35,7 +35,7 @@ def makeEventParams(flowOutputs, channel='', **newParams):
     '''
     params = _defaultEventParams.copy()
 
-    objTypes = set(['e', 'm', 't', 'g', 'j'])
+    objTypes = set(['e', 'm', 't', 'g', 'j', 'met'])
     extras = {ob:{} for ob in objTypes}
     extras['vtx'] = {}
     for fo, tag in flowOutputs.iteritems():
