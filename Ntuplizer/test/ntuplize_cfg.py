@@ -169,8 +169,8 @@ process.source = cms.Source(
     fileNames = cms.untracked.vstring(options.inputFiles),
     skipEvents = cms.untracked.uint32(options.skipEvents),
     # Example of how to select specific lumi/event
-    #eventsToProcess = cms.untracked.VEventRange('283820:801177218'),
-    #lumisToProcess = cms.untracked.VLuminosityBlockRange(':457'),
+    #eventsToProcess = cms.untracked.VEventRange('685559162:685559164'),
+    #lumisToProcess = cms.untracked.VLuminosityBlockRange('369:371'),
     )
 
 if options.lumiMask:
@@ -245,9 +245,6 @@ FlowSteps.append(ElectronScaleFactors)
 
 from UWVV.AnalysisTools.templates.BadMuonFilters import BadMuonFilters 
 FlowSteps.append(BadMuonFilters)
-from UWVV.AnalysisTools.templates.RecomputeMetUncertainties import RecomputeMetUncertainties
-FlowSteps.append(RecomputeMetUncertainties)
-
 # data and MCFM samples never have LHE info
 if not options.isMC or 'mcfm' in options.inputFiles[0].lower() \
         or 'sherpa' in options.inputFiles[0].lower() \
@@ -257,6 +254,10 @@ if not options.isMC or 'mcfm' in options.inputFiles[0].lower() \
 # jet energy corrections and basic preselection
 from UWVV.AnalysisTools.templates.JetBaseFlow import JetBaseFlow
 FlowSteps.append(JetBaseFlow)
+# Run after JEC are applied
+from UWVV.AnalysisTools.templates.RecomputeMetUncertainties import RecomputeMetUncertainties
+FlowSteps.append(RecomputeMetUncertainties)
+
 if options.isMC:
     from UWVV.Ntuplizer.templates.eventBranches import jetSystematicBranches
     extraInitialStateBranches.append(jetSystematicBranches)
@@ -424,11 +425,10 @@ for chan in channels:
                                  extraIntermediateStateBranches,
                                  **extraFinalObjectBranches),
         eventParams = makeEventParams(flow.finalTags(), chan, 
-                metSrc='slimmedMETsMuEGClean',
-                #metExtra='slimmedMETs::Ntuple',
+            metSrc='slimmedMETsMuEGClean::PAT',
             ) if not options.isMC else \
             makeEventParams(flow.finalTags(), chan,
-                #metExtra='slimmedMETs::Ntuple',
+                metSrc='slimmedMETs::PAT',
             ),
         triggers = trgBranches,
         filters = filterBranches,
