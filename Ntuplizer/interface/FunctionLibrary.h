@@ -188,53 +188,58 @@ namespace
         addTo["type1_pfMETEt"] =
           std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
                                {return evt.met(option).pt();});
-        //addTo["type1_pfMETPhi"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).phi();});
+        addTo["type1_pfMETPhi"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).phi();});
 
-        //addTo["type1_pfMETEt_jesUp"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).shiftedP4(pat::MET::JetEnUp).pt();});
-        //addTo["type1_pfMETPhi_jesUp"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).shiftedP4(pat::MET::JetEnUp).phi();});
+        addTo["type1_pfMETEt_jesUp"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetEnUp).pt();});
+        addTo["type1_pfMETPhi_jesUp"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetEnUp).phi();});
 
-        //addTo["type1_pfMETEt_jesDown"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).shiftedP4(pat::MET::JetEnDown).pt();});
-        //addTo["type1_pfMETPhi_jesDown"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).shiftedP4(pat::MET::JetEnDown).phi();});
+        addTo["type1_pfMETEt_jesDown"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetEnDown).pt();});
+        addTo["type1_pfMETPhi_jesDown"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetEnDown).phi();});
 
-        //addTo["type1_pfMETEt_jerUp"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).shiftedP4(pat::MET::JetResUp).pt();});
-        //addTo["type1_pfMETPhi_jerUp"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).shiftedP4(pat::MET::JetResUp).phi();});
+        addTo["type1_pfMETEt_jerUp"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetResUp).pt();});
+        addTo["type1_pfMETPhi_jerUp"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetResUp).phi();});
 
-        //addTo["type1_pfMETEt_jerDown"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).shiftedP4(pat::MET::JetResDown).pt();});
+        addTo["type1_pfMETEt_jerDown"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetResDown).pt();});
+        addTo["type1_pfMETPhi_jerDown"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::JetResDown).phi();});
 
-        //addTo["type1_pfMETPhi_jerDown"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).shiftedP4(pat::MET::JetResDown).phi();});
+        addTo["type1_pfMETEt_unclusteredEnUp"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::UnclusteredEnUp).pt();});
+        addTo["type1_pfMETPhi_unclusteredEnUp"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::UnclusteredEnUp).phi();});
 
-        //addTo["type1_pfMETEt_unclusteredEnUp"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).shiftedP4(pat::MET::UnclusteredEnUp).pt();});
+        addTo["type1_pfMETEt_unclusteredEnDown"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::UnclusteredEnDown).pt();});
+        addTo["type1_pfMETPhi_unclusteredEnDown"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).shiftedP4(pat::MET::UnclusteredEnDown).phi();});
 
-        //addTo["type1_pfMETEt_unclusteredEnDown"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).shiftedP4(pat::MET::UnclusteredEnDown).pt();});
-
-        //addTo["uncorrected_pfMETEt"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).corP4(pat::MET::Raw).pt();});
-        //addTo["uncorrected_pfMETPhi"] =
-        //  std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
-        //                       {return evt.met(option).corP4(pat::MET::Raw).phi();});
+        addTo["uncorrected_pfMETEt"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).corP4(pat::MET::Raw).pt();});
+        addTo["uncorrected_pfMETPhi"] =
+          std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
+                               {return evt.met(option).corP4(pat::MET::Raw).phi();});
 
         addTo["genWeight"] =
           std::function<FType>([](const edm::Ptr<T>& obj, uwvv::EventInfo& evt, const std::string& option)
