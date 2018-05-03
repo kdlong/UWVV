@@ -42,10 +42,10 @@ pushd $CMSSW_BASE/src
 
 if [ ! -d ./EgammaAnalysis ]; then
     echo "Setting up electron energy scale corrections"
-    git cms-merge-topic cms-egamma:EGM_gain_v1
+    git cms-merge-topic shervin86:Moriond2017_JEC_energyScales
 
     pushd EgammaAnalysis/ElectronTools/data
-    git clone -b Moriond17_gainSwitch_unc https://github.com/ECALELFS/ScalesSmearings.git
+    git clone git@github.com:ECALELFS/ScalesSmearings.git
     popd
 fi
 
