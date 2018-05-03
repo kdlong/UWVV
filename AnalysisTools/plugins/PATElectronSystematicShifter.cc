@@ -121,7 +121,7 @@ void PATElectronSystematicShifter::produce(edm::Event& iEvent, const edm::EventS
       float scale = 1.;
 
       float scaleError = correcter.ScaleCorrectionUncertainty(iEvent.id().run(),
-                                        isEB, r9, absEta, et, gainSeedSC);
+                                        isEB, r9, absEta, et);//, gainSeedSC);
       ele.addUserFloat("scaleCorrError", scaleError);
       if(scaleShift)
           // flip sign of shift because we're "undoing" the correction applied
@@ -129,9 +129,11 @@ void PATElectronSystematicShifter::produce(edm::Event& iEvent, const edm::EventS
           scale -= scaleShift * scaleError;
 
       float smearSigmaUp = correcter.getSmearingSigma(iEvent.id().run(), isEB, r9, absEta,
-                            et, gainSeedSC, 1, 1);
+                            et, 1, 1);
+                            //et, gainSeedSC, 1, 1);
       float smearSigmaDown = correcter.getSmearingSigma(iEvent.id().run(), isEB, r9, absEta,
-                            et, gainSeedSC, -1, -1);
+                            et, 1, 1);
+                            //et, gainSeedSC, -1, -1);
       ele.addUserFloat("resSmearSigmaUp", smearSigmaUp);
       ele.addUserFloat("resSmearSigmaDown", smearSigmaDown);
       ele.addUserFloat("PtScale_scaleUpResUp", CLHEP::RandGauss::shoot(&engine, 1-scaleError, smearSigmaUp));
@@ -143,7 +145,8 @@ void PATElectronSystematicShifter::produce(edm::Event& iEvent, const edm::EventS
         {
           float smearSigma =
             correcter.getSmearingSigma(iEvent.id().run(), isEB, r9, absEta,
-                                       et, gainSeedSC, rhoResShift, phiResShift);
+                                       //et, gainSeedSC, rhoResShift, phiResShift);
+                                       et, rhoResShift, phiResShift);
 
           scale = CLHEP::RandGauss::shoot(&engine, scale, smearSigma);
         }
