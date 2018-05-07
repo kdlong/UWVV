@@ -12,6 +12,7 @@ from UWVV.Ntuplizer.eventParams import makeEventParams, makeGenEventParams
 import os
 
 process = cms.Process("Ntuple")
+process.options = cms.untracked.PSet( allowUnscheduled = cms.untracked.bool(True) )
 
 options = VarParsing.VarParsing('analysis')
 
@@ -168,8 +169,8 @@ process.source = cms.Source(
     fileNames = cms.untracked.vstring(options.inputFiles),
     skipEvents = cms.untracked.uint32(options.skipEvents),
     # Example of how to select specific lumi/event
-    #eventsToProcess = cms.untracked.VEventRange('283820:801177218'),
-    #lumisToProcess = cms.untracked.VLuminosityBlockRange(':457'),
+    #eventsToProcess = cms.untracked.VEventRange('685559162:685559164'),
+    #lumisToProcess = cms.untracked.VLuminosityBlockRange('369:371'),
     )
 
 if options.lumiMask:
@@ -244,7 +245,6 @@ FlowSteps.append(ElectronScaleFactors)
 
 from UWVV.AnalysisTools.templates.BadMuonFilters import BadMuonFilters 
 FlowSteps.append(BadMuonFilters)
-
 # data and MCFM samples never have LHE info
 if not options.isMC or 'mcfm' in options.inputFiles[0].lower() \
         or 'sherpa' in options.inputFiles[0].lower() \
@@ -254,6 +254,10 @@ if not options.isMC or 'mcfm' in options.inputFiles[0].lower() \
 # jet energy corrections and basic preselection
 from UWVV.AnalysisTools.templates.JetBaseFlow import JetBaseFlow
 FlowSteps.append(JetBaseFlow)
+# Run after JEC are applied
+from UWVV.AnalysisTools.templates.RecomputeMetUncertainties import RecomputeMetUncertainties
+FlowSteps.append(RecomputeMetUncertainties)
+
 if options.isMC:
     from UWVV.Ntuplizer.templates.eventBranches import jetSystematicBranches
     extraInitialStateBranches.append(jetSystematicBranches)
@@ -369,7 +373,6 @@ FlowClass = createFlow(*FlowSteps)
 flow = FlowClass('flow', process, initialstate_chans=channels, **flowOpts)
 
 
-
 ### Set up tree makers
 
 # meta info tree first
@@ -398,6 +401,12 @@ else:
         from UWVV.Ntuplizer.templates.triggerBranches import zzCompositeTriggerBranches
         trgBranches = zzCompositeTriggerBranches
 
+#from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+#runMetCorAndUncFromMiniAOD(process,
+#    isData=not options.isMC,
+#)
+#process.schedule.append(cms.Path(process.fullPatMetSequence))
+
 # Add bad muon filters in addition to met filters for ReMiniAOD
 if options.isMC:
     from UWVV.Ntuplizer.templates.filterBranches import metFilters
@@ -415,11 +424,15 @@ for chan in channels:
         branches = makeBranchSet(chan, extraInitialStateBranches,
                                  extraIntermediateStateBranches,
                                  **extraFinalObjectBranches),
-        eventParams = makeEventParams(flow.finalTags(),chan, metSrc='slimmedMETsMuEGClean')
-            if not options.isMC else makeEventParams(flow.finalTags(), chan),
+        eventParams = makeEventParams(flow.finalTags(), chan, 
+            metSrc='slimmedMETsMuEGClean::PAT',
+            ) if not options.isMC else \
+            makeEventParams(flow.finalTags(), chan,
+                metSrc='slimmedMETs::PAT',
+            ),
         triggers = trgBranches,
         filters = filterBranches,
-        )
+    )
 
     setattr(process, chan, mod)
     process.treeSequence += mod
@@ -490,3 +503,5 @@ if zz and options.isMC and options.genInfo:
 p = flow.getPath()
 p += process.treeSequence
 process.schedule.append(p)
+# Useful for debugging
+# print process.dumpPython()

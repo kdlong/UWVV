@@ -77,8 +77,8 @@ if isMC:
     m = re.match(r".*(_ext[0-9]*)-", conditions)
     if m:
         config.General.requestName += m.groups()[0]
-    config.Data.splitting = 'FileBased'
-    config.Data.unitsPerJob = getUnitsPerJob(primaryDS)
+    #config.Data.splitting = 'FileBased'
+    #config.Data.unitsPerJob = getUnitsPerJob(primaryDS)
 else:
     # Since a PD will have several eras, add conditions to name to differentiate
     config.General.requestName = '_'.join([campaign_name, primaryDS, conditions])
@@ -88,8 +88,9 @@ else:
     #config.General.requestName = '_'.join([campaign_name, primaryDS, conditions, "resubmit"])
     #config.Data.lumiMask ='crab_%s/results/notFinishedLumis.json' % config.General.requestName 
     
-    config.Data.splitting = 'LumiBased'
-    config.Data.unitsPerJob = getUnitsPerJob(primaryDS)
+    #config.Data.splitting = 'LumiBased'
+    #config.Data.unitsPerJob = getUnitsPerJob(primaryDS)
+config.Data.splitting = 'Automatic'
 
 # Max requestName is 100 characters
 if len(config.General.requestName) > 100:
