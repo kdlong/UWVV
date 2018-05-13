@@ -59,8 +59,11 @@ void PATJetEnergyScaleShifter::produce(edm::Event& iEvent,
   iEvent.getByToken(srcToken, in);
 
   edm::ESHandle<JetCorrectorParametersCollection> jecParams;
-  iSetup.get<JetCorrectionsRecord>().get("AK4PF", jecParams);
-  const JetCorrectorParameters & param = (*jecParams)["Uncertainty"];
+  // Uncertainty is currently the same for all jet types, this could
+  // change in the future. Probably shouldn't be hardcoded
+  // see https://hypernews.cern.ch/HyperNews/CMS/get/jes/737.html
+  iSetup.get<JetCorrectionsRecord>().get("AK4PFchs", jecParams);
+  JetCorrectorParameters const & param = (*jecParams)["Uncertainty"];
   JetCorrectionUncertainty jecUnc(param);
 
   std::unique_ptr<VJet> outUp(new VJet());
